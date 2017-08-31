@@ -34,7 +34,7 @@ Entry point: 0xC000 (_Startup)
 _startupData is allocated at 0xC00F and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x2100     987
+  _Range   pZeroOut       0x2100     1289
   _Copy    *toCopyDownBeg 0xC320
 } _startupData;
 
@@ -46,7 +46,7 @@ Section Name                    Size  Type     From       To       Segment
 .startData                        18     R     0xC00F     0xC020   ROM_C000
 NON_BANKED                       767     R     0xC021     0xC31F   ROM_C000
 .copy                             34     R     0xC320     0xC341   ROM_C000
-.text                            793     R   0xFE8000   0xFE8318   PAGE_FE
+.text                            952     R   0xFE8000   0xFE83B7   PAGE_FE
 .stack                           256   R/W     0x2000     0x20FF   RAM
 .data                             36   R/W     0x2100     0x2123   RAM
 .abs_section_ffee                  2     R     0xFFEE     0xFFEF   .absSeg0
@@ -603,12 +603,12 @@ NON_BANKED                       767     R     0xC021     0xC31F   ROM_C000
 .abs_section_3ae                   2   N/I      0x3AE      0x3AF   .absSeg551
 .abs_section_ff86                  2     R     0xFF86     0xFF87   .absSeg552
 .bss                             427   R/W     0x2124     0x22CE   RAM
-.common                          524   R/W     0x22CF     0x24DA   RAM
+.common                          826   R/W     0x22CF     0x2608   RAM
 .vectSeg553_vect                   2     R     0xFFFE     0xFFFF   .vectSeg553
 
 Summary of section sizes per section type:
-READ_ONLY (R):         667 (dec:     1639)
-READ_WRITE (R/W):      4DB (dec:     1243)
+READ_ONLY (R):         706 (dec:     1798)
+READ_WRITE (R/W):      609 (dec:     1545)
 NO_INIT (N/I):         2AB (dec:      683)
 
 *********************************************************************************************
@@ -623,12 +623,11 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     main                                    FE8000      19      25       2   .text       
+     main                                    FE8000      16      22       2   .text       
 - VARIABLES:
-     MsgLine                                   22CF       6       6       3   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
-     Init                                    FE8019      29      41       2   .text       
+     Init                                    FE8016      29      41       2   .text       
      _Startup                                  C000       F      15       0   .init       
 - VARIABLES:
      _startupData                              C00F       6       6       3   .startData  
@@ -653,9 +652,9 @@ MODULE:                 -- CrankModule.c.o --
      _Vector_8                                 FFEE       2       2       0   .abs_section_ffee
 MODULE:                 -- DIOModule.c.o --
 - PROCEDURES:
-     LDOOutput                               FE8042      2C      44       2   .text       
-     HDOOutput                               FE806E      2F      47       2   .text       
-     DOOutput                                FE809D      2D      45       8   .text       
+     LDOOutput                               FE803F      2C      44       2   .text       
+     HDOOutput                               FE806B      2F      47       2   .text       
+     DOOutput                                FE809A      2D      45       8   .text       
 - VARIABLES:
      pHDOCtrlPort                              2100      18      24       2   .data       
      HDOCtrlPortMask                           2118       C      12       2   .data       
@@ -675,16 +674,16 @@ MODULE:                 -- interrupt.c.o --
      _Vector_66                                FF7A       2       2       0   .abs_section_ff7a
 MODULE:                 -- PLL.c.o --
 - PROCEDURES:
-     FXINIT_PLL                              FE80CA      1D      29       2   .text       
+     FXINIT_PLL                              FE80C7      1D      29       2   .text       
 - VARIABLES:
 MODULE:                 -- SPI.c.o --
 - PROCEDURES:
-     SPIReadWord                             FE80E7      D2     210       2   .text       
+     SPIReadWord                             FE80E4      D2     210       2   .text       
 - VARIABLES:
 MODULE:                 -- SysTask.c.o --
 - PROCEDURES:
 - VARIABLES:
-     sys_para                                  22D5     200     512       7   .common     
+     sys_para                                  22CF     200     512       8   .common     
 MODULE:                 -- MC9S12XET256.c.o --
 - PROCEDURES:
 - VARIABLES:
@@ -829,10 +828,10 @@ MODULE:                 -- MC9S12XET256.c.o --
      _INT_CFDATA7                               12F       1       1       0   .abs_section_12f
      _SCI4ACR2                                  132       1       1       1   .abs_section_132
      _SCI4CR2                                   133       1       1       1   .abs_section_133
-     _SCI4SR1                                   134       1       1       1   .abs_section_134
+     _SCI4SR1                                   134       1       1       2   .abs_section_134
      _SCI4SR2                                   135       1       1       0   .abs_section_135
      _SCI4DRH                                   136       1       1       0   .abs_section_136
-     _SCI4DRL                                   137       1       1       1   .abs_section_137
+     _SCI4DRL                                   137       1       1       2   .abs_section_137
      _CAN0CTL0                                  140       1       1       0   .abs_section_140
      _CAN0CTL1                                  141       1       1       0   .abs_section_141
      _CAN0BTR0                                  142       1       1       0   .abs_section_142
@@ -1238,19 +1237,20 @@ MODULE:                 -- MC9S12XET256.c.o --
      _XGR7                                      3AE       2       2       0   .abs_section_3ae
 MODULE:                 -- SCI.c.o --
 - PROCEDURES:
-     INIT_SCI                                FE81B9       F      15       2   .text       
-     SCI_receive                             FE81C8       9       9       2   .text       
+     INIT_SCI                                FE81B6       F      15       2   .text       
+     SCI_send                                FE81C5       B      11      10   .text       
+     SCI_SendDec16u                          FE81D0      43      67       6   .text       
+     SCI_receive                             FE8213       9       9       2   .text       
 - VARIABLES:
 MODULE:                 -- MsgQueue.c.o --
 - PROCEDURES:
-     InitializeQueue                         FE81D1       C      12       2   .text       
-     QueueIsFull                             FE81DD       F      15       2   .text       
-     QueueIsEmpty                            FE81EC       C      12       4   .text       
-     CopyToNode                              FE81F8      2A      42       2   .text       
-     CopyToMsg                               FE8222      2C      44       2   .text       
-     EnQueue                                 FE824E      46      70       2   .text       
-     DeQueue                                 FE8294      2D      45       2   .text       
-     SciMsgReadProcess                       FE82C1       E      14       2   .text       
+     InitializeQueue                         FE821C      36      54       2   .text       
+     QueueIsFull                             FE8252       F      15       2   .text       
+     QueueIsEmpty                            FE8261       C      12       4   .text       
+     CopyToQueue                             FE826D      22      34       2   .text       
+     CopyToMsg                               FE828F      22      34       2   .text       
+     EnQueue                                 FE82B1      58      88       2   .text       
+     DeQueue                                 FE8309      50      80       2   .text       
      receivedata                               C29C      84     132       1   NON_BANKED  
 - VARIABLES:
      Data_receive                              22C6       1       1       3   .bss        
@@ -1258,17 +1258,18 @@ MODULE:                 -- MsgQueue.c.o --
      DataSuccess_Flag                          22C8       1       1       4   .bss        
      NewMsg                                    22C9       6       6       8   .bss        
      _Vector_60                                FF86       2       2       0   .abs_section_ff86
-     ReadMsg                                   24D5       6       6       4   .common     
+     MsgLine                                   24CF     134     308      15   .common     
 MODULE:                 -- MSMQ.c.o --
 - PROCEDURES:
-     MSSCIProcess                            FE82CF      4A      74       2   .text       
+     MSSCIProcess                            FE8359      5F      95       2   .text       
 - VARIABLES:
+     ReadMsg                                   2603       6       6       4   .common     
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main.c.o                                     6     25      0
+  main.c.o                                     0     22      0
   Start12.c.o                                  0     56      0
   rtshc12.c.o (ansixbi.lib)                    0    292      0
   CrankModule.c.o                            415    166      2
@@ -1279,9 +1280,9 @@ MODULE STATISTIC
   SPI.c.o                                      0    210      0
   SysTask.c.o                                512      0      0
   MC9S12XET256.c.o                           683      0      0
-  SCI.c.o                                      0     24      0
-  MsgQueue.c.o                                15    386      2
-  MSMQ.c.o                                     0     74      0
+  SCI.c.o                                      0    102      0
+  MsgQueue.c.o                               317    449      2
+  MSMQ.c.o                                     6     95      0
   other                                      256     20     34
 
 *********************************************************************************************
@@ -1289,8 +1290,8 @@ SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
   main Init LDOOutput HDOOutput DOOutput FXINIT_PLL SPIReadWord INIT_SCI 
-  SCI_receive InitializeQueue QueueIsFull QueueIsEmpty CopyToNode CopyToMsg 
-  EnQueue DeQueue SciMsgReadProcess MSSCIProcess 
+  SCI_send SCI_SendDec16u SCI_receive InitializeQueue QueueIsFull QueueIsEmpty 
+  CopyToQueue CopyToMsg EnQueue DeQueue MSSCIProcess 
 SECTION: ".data"
   pHDOCtrlPort HDOCtrlPortMask 
 SECTION: ".bss"
@@ -1302,7 +1303,7 @@ SECTION: "NON_BANKED"
   _BSHL _lDivMod _LDIVU _NEG_P _LDIVS _CASE_CHECKED_BYTE ECT_IC0 PIT1_ISR 
   PIT2_ISR SYSTEM_TIMER_ISR receivedata 
 SECTION: ".common"
-  MsgLine sys_para ReadMsg 
+  sys_para MsgLine ReadMsg 
 SECTION: ".abs_section_ffee"
   _Vector_8 
 SECTION: ".abs_section_ff78"
@@ -2612,10 +2613,10 @@ OBJECT LIST SORTED BY ADDRESS
      _SCI4BD                                    130       2       2       1   .abs_section_130
      _SCI4ACR2                                  132       1       1       1   .abs_section_132
      _SCI4CR2                                   133       1       1       1   .abs_section_133
-     _SCI4SR1                                   134       1       1       1   .abs_section_134
+     _SCI4SR1                                   134       1       1       2   .abs_section_134
      _SCI4SR2                                   135       1       1       0   .abs_section_135
      _SCI4DRH                                   136       1       1       0   .abs_section_136
-     _SCI4DRL                                   137       1       1       1   .abs_section_137
+     _SCI4DRL                                   137       1       1       2   .abs_section_137
      _CAN0CTL0                                  140       1       1       0   .abs_section_140
      _CAN0CTL1                                  141       1       1       0   .abs_section_141
      _CAN0BTR0                                  142       1       1       0   .abs_section_142
@@ -2973,9 +2974,9 @@ OBJECT LIST SORTED BY ADDRESS
      DataRec_Count                             22C7       1       1       4   .bss        
      DataSuccess_Flag                          22C8       1       1       4   .bss        
      NewMsg                                    22C9       6       6       8   .bss        
-     MsgLine                                   22CF       6       6       3   .common     
-     sys_para                                  22D5     200     512       7   .common     
-     ReadMsg                                   24D5       6       6       4   .common     
+     sys_para                                  22CF     200     512       8   .common     
+     MsgLine                                   24CF     134     308      15   .common     
+     ReadMsg                                   2603       6       6       4   .common     
      _Startup                                  C000       F      15       0   .init       
      _BSHL                                     C021       8       8       2   NON_BANKED  
      _lDivMod                                  C029      B9     185       3   NON_BANKED  
@@ -2993,24 +2994,25 @@ OBJECT LIST SORTED BY ADDRESS
      _Vector_66                                FF7A       2       2       0   .abs_section_ff7a
      _Vector_60                                FF86       2       2       0   .abs_section_ff86
      _Vector_8                                 FFEE       2       2       0   .abs_section_ffee
-     main                                    FE8000      19      25       2   .text       
-     Init                                    FE8019      29      41       2   .text       
-     LDOOutput                               FE8042      2C      44       2   .text       
-     HDOOutput                               FE806E      2F      47       2   .text       
-     DOOutput                                FE809D      2D      45       8   .text       
-     FXINIT_PLL                              FE80CA      1D      29       2   .text       
-     SPIReadWord                             FE80E7      D2     210       2   .text       
-     INIT_SCI                                FE81B9       F      15       2   .text       
-     SCI_receive                             FE81C8       9       9       2   .text       
-     InitializeQueue                         FE81D1       C      12       2   .text       
-     QueueIsFull                             FE81DD       F      15       2   .text       
-     QueueIsEmpty                            FE81EC       C      12       4   .text       
-     CopyToNode                              FE81F8      2A      42       2   .text       
-     CopyToMsg                               FE8222      2C      44       2   .text       
-     EnQueue                                 FE824E      46      70       2   .text       
-     DeQueue                                 FE8294      2D      45       2   .text       
-     SciMsgReadProcess                       FE82C1       E      14       2   .text       
-     MSSCIProcess                            FE82CF      4A      74       2   .text       
+     main                                    FE8000      16      22       2   .text       
+     Init                                    FE8016      29      41       2   .text       
+     LDOOutput                               FE803F      2C      44       2   .text       
+     HDOOutput                               FE806B      2F      47       2   .text       
+     DOOutput                                FE809A      2D      45       8   .text       
+     FXINIT_PLL                              FE80C7      1D      29       2   .text       
+     SPIReadWord                             FE80E4      D2     210       2   .text       
+     INIT_SCI                                FE81B6       F      15       2   .text       
+     SCI_send                                FE81C5       B      11      10   .text       
+     SCI_SendDec16u                          FE81D0      43      67       6   .text       
+     SCI_receive                             FE8213       9       9       2   .text       
+     InitializeQueue                         FE821C      36      54       2   .text       
+     QueueIsFull                             FE8252       F      15       2   .text       
+     QueueIsEmpty                            FE8261       C      12       4   .text       
+     CopyToQueue                             FE826D      22      34       2   .text       
+     CopyToMsg                               FE828F      22      34       2   .text       
+     EnQueue                                 FE82B1      58      88       2   .text       
+     DeQueue                                 FE8309      50      80       2   .text       
+     MSSCIProcess                            FE8359      5F      95       2   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -3037,7 +3039,7 @@ SysTask.c.o:
   SysTaskProcess SysDigProcess DuralModeJudge DuralAppExcute NormalCtrl 
   SpeedLimitCtrl OverAccCtrl OverDecCtrl EngineStopCtrl 
 SCI.c.o:
-  SCI_send SCI_SendDec16u send_string 
+  send_string 
 MsgQueue.c.o:
   QueueItemCount 
 NOT USED VARIABLES
@@ -3092,7 +3094,7 @@ _Vector_67                USES PIT1_ISR
 _Vector_66                USES SYSTEM_TIMER_ISR 
 _Vector_60                USES receivedata 
 _Vector_8                 USES ECT_IC0 
-main                      USES FXINIT_PLL INIT_SCI MsgLine InitializeQueue 
+main                      USES FXINIT_PLL INIT_SCI InitializeQueue 
                                 MSSCIProcess 
 Init                      USES _startupData 
 LDOOutput                 USES _BSHL LDOStatus SPIReadWord 
@@ -3102,11 +3104,15 @@ FXINIT_PLL                USES _CLKSEL _PLLCTL _CRGINT _SYNR _REFDV _CRGFLG
 SPIReadWord               USES _CASE_CHECKED_BYTE _PORTE _SPI0SR _SPI0DR _PTS 
                                 _SPI1SR _SPI1DR _SPI2CR1 _SPI2CR2 _SPI2SR _SPI2DR 
 INIT_SCI                  USES _SCI4BD _SCI4ACR2 _SCI4CR2 
+SCI_send                  USES _SCI4SR1 _SCI4DRL 
+SCI_SendDec16u            USES SCI_send 
 SCI_receive               USES _SCI4SR1 _SCI4DRL 
-EnQueue                   USES QueueIsFull CopyToNode QueueIsEmpty 
-DeQueue                   USES QueueIsEmpty CopyToMsg 
-SciMsgReadProcess         USES ReadMsg MsgLine DeQueue 
-MSSCIProcess              USES SciMsgReadProcess ReadMsg sys_para 
+InitializeQueue           USES MsgLine 
+EnQueue                   USES QueueIsFull QueueIsEmpty CopyToQueue 
+                                SCI_SendDec16u SCI_send 
+DeQueue                   USES QueueIsEmpty CopyToMsg SCI_SendDec16u SCI_send 
+MSSCIProcess              USES ReadMsg MsgLine DeQueue sys_para SCI_SendDec16u 
+                                SCI_send 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -3123,14 +3129,22 @@ DEPENDENCY TREE
  |  |    
  |  +- MSSCIProcess        
  |     | 
- |     +- SciMsgReadProcess   
- |        | 
- |        +- DeQueue             
- |           | 
- |           +- QueueIsEmpty        
- |           |    
- |           +- CopyToMsg           
- |                
+ |     +- DeQueue             
+ |     |  | 
+ |     |  +- QueueIsEmpty        
+ |     |  |    
+ |     |  +- CopyToMsg           
+ |     |  |    
+ |     |  +- SCI_SendDec16u      
+ |     |  |  | 
+ |     |  |  +- SCI_send            
+ |     |  |       
+ |     |  +- SCI_send             (see above)
+ |     |     
+ |     +- SCI_SendDec16u       (see above)
+ |     |  
+ |     +- SCI_send             (see above)
+ |        
  +- _Startup            
     | 
     +- Init                
@@ -3187,9 +3201,13 @@ DEPENDENCY TREE
        | 
        +- QueueIsFull         
        |    
-       +- CopyToNode          
-       |    
        +- QueueIsEmpty         (see above)
+       |  
+       +- CopyToQueue         
+       |    
+       +- SCI_SendDec16u       (see above)
+       |  
+       +- SCI_send             (see above)
           
 *********************************************************************************************
 STATISTIC SECTION
@@ -3198,5 +3216,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 11
-Total size of all blocks to be downloaded: 1639
+Total size of all blocks to be downloaded: 1798
 

@@ -13,8 +13,8 @@
 #include "typedefine.h"           //类型别名定义
 #include "SCI.h"
 
-
-
+#define Queue_Size 50
+/*
 typedef struct node {
 
     T_SciMsg SciMsg;
@@ -35,9 +35,23 @@ Bool QueueIsFull(const Queue *pq);
 Bool QueueIsEmpty(const Queue *pq);
 int QueueItemCount(const Queue *pq);
 Bool EnQueue(T_SciMsg Msg,Queue *pq);
-Bool DeQueue(T_SciMsg *pMsg,Queue *pq);
+Bool DeQueue(T_SciMsg *pMsg,Queue *pq);  */
+typedef struct queue{
 
-void SciMsgAddProcess(void);
+    T_SciMsg *front;
+    T_SciMsg *rear;
+    uint16 items;
+    uint16 addroffset;
+    T_SciMsg  Msgdata[Queue_Size];
+}Queue;
 
-
+static void CopyToQueue(T_SciMsg Msg, Queue *pn);
+static void CopyToMsg(Queue *pn, T_SciMsg Msg);
+void InitializeQueue(void);
+//void SciMsgAddProcess(void);
+Bool QueueIsFull(const Queue *pq);
+Bool QueueIsEmpty(const Queue *pq);
+int QueueItemCount(const Queue *pq);
+Bool EnQueue(T_SciMsg Msg,Queue *pq);
+Bool DeQueue(T_SciMsg *Msg,Queue *pq);
 #endif

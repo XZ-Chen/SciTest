@@ -10,10 +10,9 @@
 #include "ATD.h"
 #include "PinMap.h"
 #include "SCI.h"
+//#include "MsgQueue.h"
 #include "MSMQ.h"
-#include "MsgQueue.h"
 
-Queue MsgLine;
 
 void main(void) {
   //关总中断
@@ -37,7 +36,7 @@ void main(void) {
   //StartSystemTimer();  //开启定时器
   //_ENABLE_COP_X();      //看门狗设置
   INIT_SCI();
-  InitializeQueue(&MsgLine);
+  InitializeQueue();
   EnableInterrupts; 
   for(;;)
   {

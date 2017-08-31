@@ -9,29 +9,36 @@ E-mail: 2008f.d@163.com
 #include "derivative.h"      /* derivative-specific definitions */
 #include "MsgQueue.h"
 #include "SCI.h"
-#define MAXQUEUE 10
-extern uint8  DataSuccess_Flag;
-extern T_SciMsg NewMsg;
-extern Queue MsgLine;
+
+Queue MsgLine;
+
 /*************************************************************/
 /*                     初始化队列                            */
 /*************************************************************/
-void InitializeQueue(Queue *pq) {
-
-    pq->front = pq->rear = NULL;
-    pq->items = 0;
+void InitializeQueue(void) {
+	int i;
+  MsgLine.front = MsgLine.rear = NULL;
+  MsgLine.items = 0;
+	MsgLine.front = MsgLine.rear = 0;
+  MsgLine.items = 0;
+  MsgLine.Msgdata->len = 5;
+	MsgLine.Msgdata->MsgHead = MsgLine.Msgdata->MsgTail = 0;
+	for(i=0;i<Queue_Size;i++){
+  	MsgLine.Msgdata->data[i] = 0;
+	}
+	
 }
 /*************************************************************/
 /*                     判断队列状态                          */
 /*************************************************************/
-Bool QueueIsFull(const Queue *pq){
-    
-    return pq->items == MAXQUEUE;
+Bool QueueIsFull(const Queue *pq)
+{    
+    return pq->items == Queue_Size;
 }
-
-Bool QueueIsEmpty(const Queue *pq){
-
-    return pq->items == 0;
+   
+Bool QueueIsEmpty(const Queue *pq)
+{   
+    return pq->items == 0;;
 }
 int QueueItemCount(const Queue *pq){
 
@@ -40,63 +47,54 @@ int QueueItemCount(const Queue *pq){
 /*************************************************************/
 /*                     往队列复制项目                        */
 /*************************************************************/
-static void CopyToNode(T_SciMsg Msg, Node *pn){
+static void CopyToQueue(T_SciMsg Msg, Queue *pn){
    
-   int i;
-   pn->SciMsg.MsgHead = Msg.MsgHead;
-   pn->SciMsg.MsgTail = Msg.MsgTail; 
+   int i; 
    for(i=0;i<=2;i++) 
-      pn->SciMsg.data[i] = Msg.data[i];
+      pn->rear->data[i] = Msg.data[i];
 }
-static void CopyToMsg(Node *pn, T_SciMsg *Msg){
+static void CopyToMsg(Queue *pn, T_SciMsg *Msg){
    
-   int j;
-   Msg->MsgHead = pn->SciMsg.MsgHead;
-   Msg->MsgTail = pn->SciMsg.MsgTail; 
+   int j; 
    for(j=0;j<=2;j++)
-      Msg->data[j] = pn->SciMsg.data[j];
+      Msg->data[j] = pn->front->data[j];
 }
 /*************************************************************/
 /*                     往队列添加项目                        */
 /*************************************************************/
 Bool EnQueue(T_SciMsg Msg,Queue *pq) {
-    Node *pnew;
-    if(QueueIsFull(pq))
-        return FALSE;
-    CopyToNode(Msg, pnew);  
-    pnew->next = NULL;
-    if(QueueIsEmpty(pq))
-        pq->front = pnew; //数据包处于队列首端
-    else 
-        pq->rear->next = pnew;  //链接到队列尾端
-    pq->rear = pnew;            //记录队列尾端的位置
-    pq->items++;                //队列项目个数增加1
-    return TRUE;
-    
+
+	if(QueueIsFull(pq))
+       return FALSE;
+	if(QueueIsEmpty(pq))
+       pq->rear = &(pq->Msgdata[0]); //数据包处于队列首端       	
+  else 
+     	 pq->rear = &(pq->Msgdata[pq->items]);  //链接到队列尾端	                               
+  CopyToQueue(Msg, pq);  
+  pq->items++;                //队列项目个数增加
+ 	SCI_SendDec16u(pq->items);
+ 	SCI_send('\n');
+  return TRUE;  
 }
 /*************************************************************/
 /*                     从队列读取项目                        */
 /*************************************************************/
 Bool DeQueue(T_SciMsg *Msg,Queue *pq) {
-    //Node *pt;
     if(QueueIsEmpty(pq))
         return FALSE;
-    CopyToMsg(pq->front, Msg);
-    //pt =pq->front;
-    
-    pq->front = pq->front->next;
-    pq->items--;                //队列项目个数增加1
-    if(pq->items == 0)
-        pq->rear = NULL;
+    CopyToMsg(pq, Msg);
+    pq->addroffset++;
+    SCI_SendDec16u(pq->addroffset);
+    SCI_send('\n');
+    pq->front = &(pq->Msgdata[pq->addroffset]);
+    if(pq->items == pq->addroffset)
+    {  
+	  	pq->rear = pq->front = &(pq->Msgdata[0]);
+	    pq->addroffset = pq->items = 0;
+    }	
     return TRUE;
 }   
-/*************************************************************/
-/*                     从队列取数据                          */
-/*************************************************************/
-T_SciMsg ReadMsg;
-Bool SciMsgReadProcess(void){
-     return DeQueue(&ReadMsg,&MsgLine);
-}
+
 /*************************************************************/
 /*                     串口中断接收函数                      */
 /*************************************************************/
